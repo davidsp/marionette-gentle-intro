@@ -6,6 +6,11 @@ ContactManager.module("ContactsApp.List", function(List, ContactManager, Backbon
             contactsRegion: "#contacts-region"
         }
     });
+    var NoContactsView = Marionette.ItemView.extend({
+        template: "#contact-list-none",
+        tagName: "tr",
+        className: "alert"
+    });
     List.Panel = Marionette.ItemView.extend({
         template: "#contact-list-panel",
         triggers: {
@@ -14,10 +19,17 @@ ContactManager.module("ContactsApp.List", function(List, ContactManager, Backbon
         events: {
             "submit #filter-form": "filterContacts"
         },
+        ui: {
+            criterion: "input.js-filter-criterion"
+        },
+
         filterContacts: function(e){
             e.preventDefault();
             var criterion = this.$(".js-filter-criterion").val();
             this.trigger("contacts:filter", criterion);
+        },
+        onSetFilterCriterion: function(criterion){
+            this.ui.criterion.val(criterion);
         }
     });
 
@@ -55,6 +67,7 @@ ContactManager.module("ContactsApp.List", function(List, ContactManager, Backbon
         tagName: "table",
         className: "table table-hover",
         template: "#contact-list",
+        emptyView: NoContactsView,
         itemView: List.Contact,
         itemViewContainer: 'tbody',
         initialize: function(){
